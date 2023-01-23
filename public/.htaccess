@@ -1,3 +1,4 @@
+#route all to index, allow to use 'nice' urls instead of ?url= param
 <IfModule mod_rewrite.c>
   Options -Multiviews
   RewriteEngine On

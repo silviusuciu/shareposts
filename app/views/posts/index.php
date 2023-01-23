@@ -13,7 +13,6 @@
         </div>
     </div>
     <?php
-//    var_dump( $data['posts'] );
     foreach ( $data['posts'] as $post ) : ?>
         <div class="card card-body mb-3">
             <h4 class="card-title"><?php echo $post->title; ?></h4>

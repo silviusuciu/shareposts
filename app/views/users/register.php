@@ -39,4 +39,3 @@
         </div>
     </div>
 <?php require APPROT . '/views/inc/footer.php'; ?>
-

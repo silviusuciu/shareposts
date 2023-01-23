@@ -1,8 +1,6 @@
 <?php
 
 class Pages extends Controller {
-    public function __construct() {
-    }
 
     public function index() {
         if ( isLoggedIn() ) {
@@ -11,7 +9,7 @@ class Pages extends Controller {
 
         $data = [
             'title' => 'SharePosts',
-            'description' => 'Simple social network built with love and care by Silviu'
+            'description' => 'Tiny social network built with PHP'
         ];
 
         $this->view( lcfirst( __CLASS__ ) . '/index', $data );
