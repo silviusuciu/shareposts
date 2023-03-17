@@ -16,6 +16,11 @@ class Database {
     private $stmt;
     private $error;
 
+    /**
+     * @var self
+     */
+    protected static $_instance;
+
     public function __construct() {
         // set DSN
         $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
@@ -32,6 +37,20 @@ class Database {
             $this->error = $e->getMessage();
             die( $this->error );
         }
+    }
+
+    /**
+     * Singleton instance
+     *
+     * @return Database
+     */
+    public static function get_instance() {
+
+        if ( ! self::$_instance ) {
+            self::$_instance = new self();
+        }
+
+        return self::$_instance;
     }
 
     // Prepare statement with query

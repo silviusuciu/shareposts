@@ -1,10 +1,6 @@
 <?php
-class User {
-    private $db;
-
-    public function __construct() {
-        $this->db = new Database;
-    }
+class User extends Model {
+    protected $name = 'users';
 
     // Find user by email
     public function findUserByEmail( $email ) {
@@ -22,16 +18,6 @@ class User {
     }
 
     // Register user
-    public function register( $data ) {
-        $this->db->query( 'INSERT INTO users (name, email, password) VALUES (:name, :email, :password)' );
-        $this->db->bind( ':name', $data['name'] );
-        $this->db->bind( ':email', $data['email'] );
-        $this->db->bind( ':password', $data['password'] );
-
-        return $this->db->execute();
-    }
-
-    // Register user
     public function login( $email, $password ) {
         $this->db->query( 'SELECT * FROM users WHERE email = :email' );
         $this->db->bind( ':email', $email );
@@ -45,12 +31,5 @@ class User {
         } else {
             return false;
         }
-    }
-
-    public function getUserById( $id ) {
-        $this->db->query( 'SELECT * FROM users WHERE id = :id' );
-        $this->db->bind( ':id', $id );
-
-        return $this->db->single();
     }
 }

@@ -66,7 +66,13 @@ class Users extends Controller {
                 $data['password'] = password_hash( $data['password'], PASSWORD_DEFAULT );
 
                 // Register user
-                if ( $this->userModel->register( $data ) ) {
+                $update_data = [
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => $data['password']
+                ];
+
+                if ( $this->userModel->create( $update_data ) ) {
                     flash( 'register_success', 'You are registered and can log in' );
                     redirect( 'users/login' );
                 } else {
