@@ -121,7 +121,7 @@ class Posts extends Controller {
 
         } else {
             // Get existing post from model
-            $post = $this->postModel->getById( $id );
+            $post = $this->postModel->getByParam( [ 'id' => $id ] );
             // Check for owner
             if ( $post->user_id != $_SESSION['user_id'] ) {
                 redirect('posts');
@@ -139,8 +139,8 @@ class Posts extends Controller {
 
     public function show( $id ) {
 
-        $post = $this->postModel->getById( $id );
-        $user = $this->userModel->getById( $post->user_id );
+        $post = $this->postModel->getByParam( [ 'id' => $id ] );
+        $user = $this->userModel->getByParam( [ 'id' => $post->user_id ] );
 
         $data = [
             'post' => $post,
@@ -152,7 +152,7 @@ class Posts extends Controller {
 
     public function delete( $id ) {
         if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
-            $post = $this->postModel->getById( $id );
+            $post = $this->postModel->getByParam( [ 'id' => $id ] );
 
             if ( $post->user_id != $_SESSION['user_id'] ) {
                 redirect('posts');

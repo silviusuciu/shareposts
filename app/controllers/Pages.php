@@ -23,4 +23,14 @@ class Pages extends Controller {
 
         $this->view( lcfirst( __CLASS__ ) . '/about', $data );
     }
+
+    public function test() {
+        $data = [
+            'title' => 'Page for tests',
+            'description' => 'Page to test stuff',
+            'model' => $this->model( 'Post' )
+        ];
+
+        $this->view( lcfirst( __CLASS__ ) . '/test', $data );
+    }
 }

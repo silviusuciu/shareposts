@@ -3,19 +3,32 @@ class Post extends Model {
     protected $name = 'posts';
 
     // Select all posts
-    public function getPosts() {
-        $sql = 'SELECT *,
-       posts.id as postId,
-       users.id as userId,
-       posts.created_at as postCreated,
-       users.created_at as userCreated
-       FROM posts
-       INNER JOIN users
-       ON posts.user_id = users.id
-       ORDER BY posts.created_at DESC';
-        $this->db->query( $sql );
-//        $this->db->bind( ':user_id', $_SESSION['user_id'] );
+    public function getPosts( $cache_test = [] ) {
+        $cacheKey = 'posts';
+        $cache = Cache::get_instance();
 
-        return $this->db->resultSet();
+        $result = $cache->get( $cacheKey );
+        if ( ! empty( $result ) && ( empty( $cache_test ) || $cache_test['active'] === true )  ) {
+            return $result;
+        }
+
+        $sql = '
+        SELECT posts.id as postId,
+               posts.created_at as postCreated,
+               posts.title,
+               posts.body,
+               users.id as userId,
+               users.created_at as userCreated,
+               users.name
+        FROM posts
+            INNER JOIN users ON posts.user_id = users.id
+        ORDER BY posts.created_at DESC';
+
+        $this->db->query( $sql );
+        $result = $this->db->resultSet();
+
+        $cache->set( $cacheKey, $result, 60 );
+
+        return $result;
     }
 }

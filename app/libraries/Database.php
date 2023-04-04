@@ -22,6 +22,7 @@ class Database {
     protected static $_instance;
 
     public function __construct() {
+
         // set DSN
         $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
         $options = array(
@@ -99,5 +100,9 @@ class Database {
     // Get row count
     public function rowCount() {
         return $this->stmt->rowCount();
+    }
+
+    public function __destruct() {
+        $this->dbh = null;
     }
 }

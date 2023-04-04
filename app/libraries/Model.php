@@ -8,44 +8,58 @@ class Model {
 
     public function create( $data ) {
 
-        $keys = [];
-        $values = [];
+        $columns = implode( ', ', array_keys( $data ) );
+        $values = ':' . implode( ', :', array_keys( $data ) );
+
+        $query = "INSERT INTO $this->name ( $columns ) VALUES ( $values )";
+
+        $this->db->query( $query );
 
         foreach ( $data as $key => $value ) {
-            $keys[] = $key;
-            $values[] = ':' . $key;
-        }
-
-        $keysString = implode( ', ', $keys );
-        $valuesString = implode( ', ', $values );
-
-        $sql = 'INSERT INTO posts (' . $keysString .  ') VALUES (' . $valuesString .  ')';
-
-        $this->db->query( $sql );
-
-        foreach ( $data as $key => $value ) {
-            $this->db->bind( ':' . $key, $value );
+            $this->db->bind( ":$key", $value );
         }
 
         return $this->db->execute();
     }
 
+    // read
+    public function getByParam( $param, $check_only = false, $cache_ttl = 60 ) {
+
+        $key = key( $param );
+        $val = $param[ $key ];
+
+        $query = "SELECT * FROM $this->name WHERE $key = :$key";
+
+        $this->db->query( $query );
+        $this->db->bind( ":$key", $val );
+
+        $result = $this->db->single();
+
+        // Check row
+        if ( $check_only ) {
+            return $this->db->rowCount() > 0;
+        }
+
+        return $result;
+    }
+
     public function update( $data ) {
 
         $where = array_pop( $data );
-        $whereKey = key( $where );
-        $whereVal = $where[ $whereKey ];
+        $key = key( $where );
+        $val = $where[ $key ];
 
-        $set = array_map( static function ( $key ) { return $key . ' = :' . $key; }, array_keys( $data ) );
-        $set = implode( ', ', $set );
+        $set = implode( ', ', array_map( static function ( $key ) {
+            return "$key = :$key";
+        }, array_keys( $data ) ) );
 
-        $sql = 'UPDATE ' . $this->name . ' SET ' . $set . ' WHERE ' . $whereKey . ' = :' . $whereKey;
+        $query = "UPDATE $this->name SET $set WHERE $key = :$key";
 
-        $this->db->query( $sql );
-        $this->db->bind( ':' . $whereKey, $whereVal );
+        $this->db->query( $query );
+        $this->db->bind( ":$key", $val );
 
         foreach ( $data as $key => $value ) {
-            $this->db->bind( ':' . $key, $value );
+            $this->db->bind( ":$key", $value );
         }
 
         return $this->db->execute();
@@ -56,19 +70,12 @@ class Model {
         $key = key( $data );
         $val = $data[ $key ];
 
-        $sql = 'DELETE FROM ' . $this->name . ' WHERE ' . $key . ' = :' . $key;
+        $query = "DELETE FROM $this->name WHERE $key = :$key";
 
-        $this->db->query( $sql );
+        $this->db->query( $query );
 
-        $this->db->bind( ':' . $key, $val );
+        $this->db->bind( ":$key", $val );
 
         return $this->db->execute();
-    }
-
-    public function getById( $id ) {
-        $this->db->query( 'SELECT * FROM ' . $this->name . ' WHERE id = :id' );
-        $this->db->bind( ':id', $id );
-
-        return $this->db->single();
     }
 }

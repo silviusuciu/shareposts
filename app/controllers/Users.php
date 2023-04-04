@@ -32,7 +32,7 @@ class Users extends Controller {
                 $data['email_err'] = 'Please enter email';
             } else {
                 // Check email
-                if ( $this->userModel->findUserByEmail( $data['email'] ) ) {
+                if ( $this->userModel->getByParam( [ 'email' => $data['email'] ], true ) ) {
                     $data['email_err'] = 'Email is already taken';
                 }
             }
@@ -125,7 +125,7 @@ class Users extends Controller {
             }
 
             // Check for user/email
-            if ( $this->userModel->findUserByEmail( $data['email'] ) ) {
+            if ( $this->userModel->getByParam( [ 'email' => $data['email'] ], true ) ) {
                 // User found
             } else {
                 // User not found
